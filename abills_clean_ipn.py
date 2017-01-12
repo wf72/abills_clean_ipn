@@ -17,10 +17,10 @@ def config(section='Main'):
     Config = ConfigParser.SafeConfigParser(DefaultConfig)
     Config.read(work_dir+"/settings.cfg")
     if section == 'DBConfig':
-        return {'host': Config.get('Main', 'dbHost'),
-                'user': Config.get('Main', 'dbUser'),
-                'passwd': Config.get('Main', 'dbPassword'),
-                'db': Config.get('Main', 'dbName'), }
+        return {'host': Config.get('DBConfig', 'dbHost'),
+                'user': Config.get('DBConfig', 'dbUser'),
+                'passwd': Config.get('DBConfig', 'dbPassword'),
+                'db': Config.get('DBConfig', 'dbName'), }
 
     else:
         dict1 = {}
@@ -59,10 +59,11 @@ def CleanDB():
         if table_name[0][-10:] == xday:
             break
         query = 'DELETE FROM %s' % table_name[0]
-        #cur.execute(query)
+        cur.execute(query)
         query = 'OPTIMIZE TABLE %s' % table_name[0]
         cur.execute(query)
 
 
 
 if __name__ == '__main__':
+    CleanDB()

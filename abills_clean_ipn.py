@@ -28,8 +28,6 @@ def config(section='Main'):
         for option in options:
             try:
                 dict1[option] = Config.get(section, option)
-                if dict1[option] == -1:
-                    print("skip: %s" % option)
             except:
                 print("exception on %s!" % option)
                 dict1[option] = None
@@ -38,10 +36,8 @@ def config(section='Main'):
 
 def DBConnect():
     try:
-        print("Start connecting to DB")
         con = db.connect(**config('DBConfig'))
         cur = con.cursor()
-        print("Connecting done")
         cur.execute('SET NAMES `utf8`')
         return con, cur
     except db.Error:

@@ -5,19 +5,20 @@ import ConfigParser
 import datetime
 import os
 
+
 def config(section='Main'):
     """ConfigParser"""
     try:
         work_dir = os.path.dirname(os.path.realpath(__file__)) + os.sep
     except:
         work_dir = "./"
-    DefaultConfig = {'dbHost': '127.0.0.1',
+    defaultconfig = {'dbHost': '127.0.0.1',
                      'dbUser': 'abills',
                      'dbPassword': '',
                      'dbName': 'abills',
                      'keep_days': '120',
                      }
-    Config = ConfigParser.SafeConfigParser(DefaultConfig)
+    Config = ConfigParser.SafeConfigParser(defaultconfig)
     Config.read(work_dir+"/settings.cfg")
     if section == 'DBConfig':
         return {'host': Config.get('DBConfig', 'dbHost'),
@@ -43,7 +44,7 @@ def DBConnect():
         cur.execute('SET NAMES `utf8`')
         return con, cur
     except db.Error:
-        print(con.error())
+        print(db.error())
 
 
 def CleanDB():
@@ -57,7 +58,6 @@ def CleanDB():
             cur.execute(query)
             query = 'OPTIMIZE TABLE %s' % table_name[0]
             cur.execute(query)
-
 
 
 if __name__ == '__main__':

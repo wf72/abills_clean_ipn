@@ -7,7 +7,10 @@ import os
 
 def config(section='Main'):
     """ConfigParser"""
-    work_dir = os.path.dirname(os.path.realpath(__file__)) + os.sep
+    try:
+        work_dir = os.path.dirname(os.path.realpath(__file__)) + os.sep
+    except:
+        work_dir = "./"
     DefaultConfig = {'dbHost': '127.0.0.1',
                      'dbUser': 'abills',
                      'dbPassword': '',
@@ -21,7 +24,6 @@ def config(section='Main'):
                 'user': Config.get('DBConfig', 'dbUser'),
                 'passwd': Config.get('DBConfig', 'dbPassword'),
                 'db': Config.get('DBConfig', 'dbName'), }
-
     else:
         dict1 = {}
         options = Config.options(section)
@@ -47,17 +49,14 @@ def DBConnect():
 def CleanDB():
     """Clean db tables ipn_traf_detail_YYYY_mm_dd"""
     con, cur = DBConnect()
-    td = datetime.timedelta(days=int(config('Main')['keep_days']))
-    xday = (datetime.datetime.now() - td).strftime("%Y_%m_%d")
     cur.execute('SELECT table_name FROM information_schema.tables where table_name like "ipn_traf_detail_%" ORDER BY table_name;')
     data = cur.fetchall()
     for table_name in data:
-        if table_name[0][-10:] == xday:
-            break
-        query = 'DELETE FROM %s' % table_name[0]
-        cur.execute(query)
-        query = 'OPTIMIZE TABLE %s' % table_name[0]
-        cur.execute(query)
+        if abs(datetime.datetime.now() - datetime.datetime.strptime(table_name[0][-10:],"%Y_%m_%d")).days > int(config('Main')['keep_days']):
+            query = 'DELETE FROM %s' % table_name[0]
+            cur.execute(query)
+            query = 'OPTIMIZE TABLE %s' % table_name[0]
+            cur.execute(query)
 
 
 
